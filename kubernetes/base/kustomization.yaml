@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: document-processor
+
+labels:
+  - includeSelectors: true
+    includeTemplates: true
+    pairs:
+      app.kubernetes.io/name: document-processor
+      app.kubernetes.io/component: processor
+
+resources:
+  - serviceaccount.yaml
+  - configmap.yaml
+  - deployment.yaml
+  - hpa.yaml
+  - pdb.yaml
+  - servicemonitor.yaml
+  - prometheusrule.yaml

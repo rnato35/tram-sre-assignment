@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: document-processor
+spec:
+  replicas: 4
+  template:
+    spec:
+      containers:
+        - name: document-processor
+          resources:
+            requests:
+              cpu: 300m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi

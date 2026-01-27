@@ -1,0 +1,41 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: document-processor
+  labels:
+    release: prometheus-stack
+spec:
+  groups:
+    - name: document-processor.rules
+      rules:
+        - alert: DocumentProcessorHighErrorRate
+          expr: |
+            (
+              sum(rate(http_requests_total{app="document-processor",status=~"5.."}[5m]))
+              /
+              sum(rate(http_requests_total{app="document-processor"}[5m]))
+            ) * 100 > 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High error rate detected for document-processor"
+            description: "More than 5% of requests are failing over the last 5m."
+        - alert: DocumentProcessorQueueDepthHigh
+          expr: |
+            aws_sqs_approximate_number_of_messages_visible{queue="document-processor"} > 1000
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "SQS queue depth high for document-processor"
+            description: "Queue depth exceeded 1000 messages for 10m."
+        - alert: DocumentProcessorPodRestarts
+          expr: |
+            increase(kube_pod_container_status_restarts_total{container="document-processor"}[15m]) > 3
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod restarts detected for document-processor"
+            description: "Pods restarted more than 3 times within 15m."

@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: document-processor
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: document-processor
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      honorLabels: true
